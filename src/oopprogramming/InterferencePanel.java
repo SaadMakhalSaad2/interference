@@ -15,6 +15,10 @@ public class InterferencePanel extends JPanel implements ActionListener {
         this.setBackground(Color.white);
     }
 
+    public void setSlant(double slant) {
+        this.slant = slant;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -54,7 +58,7 @@ public class InterferencePanel extends JPanel implements ActionListener {
         double y2 = -0.8;
         double dy2 = 0.1;
 
-        Stroke stroke2 = new BasicStroke(2);
+        Stroke stroke2 = new BasicStroke(1);
         graphics2D.setStroke(stroke2);
         graphics2D.setColor(Color.lightGray);
         while (y2 < 1.0) {
@@ -81,6 +85,9 @@ public class InterferencePanel extends JPanel implements ActionListener {
         slant -= 0.05;
         slant = slant <= 0.0 ? 2.0 : slant;
         this.repaint();
+
+        System.out.println("action" + e.getActionCommand());
     }
+
 
 }
