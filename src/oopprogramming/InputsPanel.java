@@ -17,13 +17,14 @@ public class InputsPanel extends JPanel {
     }
 
     private void addInputs(ActionListener listener, ListSelectionListener listener2) {
+        
         angle.setMaximumSize(angle.getPreferredSize());
         linesCount.setMaximumSize(angle.getPreferredSize());
         name.setMaximumSize(angle.getPreferredSize());
         moiresJList = new JList(moiresDrawn); //data has type Object[]
         moireListScroller = new JScrollPane(moiresJList);
         moireListScroller.setMaximumSize(new Dimension((int) angle.getPreferredSize().getWidth(), 200));
-        options.setMaximumSize(angle.getPreferredSize());
+        moireTypeDropdown.setMaximumSize(angle.getPreferredSize());
         angle.setText("2.0");
         linesCount.setText("1");
         name.setText("Line 1");
@@ -35,7 +36,7 @@ public class InputsPanel extends JPanel {
         draw.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         draw.addActionListener(listener);
-        options.addActionListener(listener);
+        moireTypeDropdown.addActionListener(listener);
         moiresJList.addListSelectionListener(listener2);
 
         moiresJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -44,7 +45,7 @@ public class InputsPanel extends JPanel {
 
 
         this.add(optionsLabel);
-        this.add(options);
+        this.add(moireTypeDropdown);
         this.add(nameLabel);
         this.add(name);
         this.add(linesCountLabel);
@@ -62,7 +63,7 @@ public class InputsPanel extends JPanel {
     List<Moire> moires = new ArrayList<>();
     int selectedMoire = 0;
 
-    final JComboBox<String> options = new JComboBox<>(choices);
+    final JComboBox<String> moireTypeDropdown = new JComboBox<>(choices);
     JButton draw = new JButton("draw");
     JLabel optionsLabel = new JLabel("Moire type");
     JLabel nameLabel = new JLabel("Name");
@@ -80,7 +81,9 @@ public class InputsPanel extends JPanel {
         Moire selectedMoire = moires.get(selectedMoireIndex);
         this.selectedMoire = selectedMoireIndex;
         this.name.setText(selectedMoire.getName());
-        this.options.setSelectedIndex(new ArrayList<>(Arrays.asList(choices)).indexOf(selectedMoire.getType()));
+        this.moireTypeDropdown.setSelectedIndex(new ArrayList<>(Arrays.asList(choices)).indexOf(selectedMoire.getType()));
+        this.name.setText(String.valueOf(selectedMoire.getName()));
+
         if (selectedMoire.getType().equals("Circles")) {
             showLineInputs(false);
         } else {
@@ -94,5 +97,13 @@ public class InputsPanel extends JPanel {
         this.linesCount.setVisible(b);
         this.angleLabel.setVisible(b);
         this.linesCountLabel.setVisible(b);
+    }
+
+
+    public void clearInputs() {
+        this.moireTypeDropdown.setSelectedIndex(new ArrayList<>(Arrays.asList(choices)).indexOf("Lines"));
+        this.name.setText("Line x");
+        this.draw.setText("draw");
+        this.angle.setText("1.0");
     }
 }

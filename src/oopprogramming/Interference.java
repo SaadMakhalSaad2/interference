@@ -44,18 +44,24 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().getClass().equals(JButton.class)) {
-            Moire moire = new Moire(inputs.name.getText(), inputs.options.getSelectedItem() + "");
+            Moire moire = new Moire(inputs.name.getText(), inputs.moireTypeDropdown.getSelectedItem() + "");
 
             if (moire.getType().equals("Lines")) {
                 moire.setLines(Integer.parseInt(inputs.linesCount.getText()));
                 moire.setAngle(Double.parseDouble(inputs.angle.getText()));
             }
+            if (updating) {
+                inputs.moires.set(selectedIndex, moire);
+                inputs.moiresDrawn.set(selectedIndex, moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
+            } else {
+                inputs.moires.add(moire);
+                inputs.moiresDrawn.addElement(moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
+            }
 
             drawingPanel.setMMoire(moire);
-            inputs.moires.add(moire);
-            inputs.moiresDrawn.addElement(moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
             this.repaint();
-
+            updating = false;
+            inputs.clearInputs();
         } else if (e.getSource().getClass().equals(JComboBox.class)) {
             String shape = ((JComboBox<?>) e.getSource()).getSelectedItem() + "";
             inputs.name.setText(shape + " x");
@@ -69,13 +75,19 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
     }
 
 
+    int selectedIndex;
+    boolean updating = false;
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
+        inputs.draw.setText("update");
         if (e.getSource().getClass().equals(JList.class)) {
-            int item = ((JList<?>) e.getSource()).getSelectedIndex();
-            inputs.updateInputs(item);
-            drawingPanel.setMMoire(inputs.moires.get(item));
+            System.out.println("selected index: " + selectedIndex);
+            selectedIndex = ((JList<?>) e.getSource()).getSelectedIndex();
+            inputs.updateInputs(selectedIndex);
+            drawingPanel.setMMoire(inputs.moires.get(selectedIndex));
             this.repaint();
+            updating = true;
         }
     }
 }
