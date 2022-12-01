@@ -1,13 +1,17 @@
 package oopprogramming;
 
+import oopprogramming.models.Moire;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Interference extends JFrame implements ActionListener {
-    InputsPanel inputs = new InputsPanel(this);
+public class Interference extends JFrame implements ActionListener, ListSelectionListener {
+    InputsPanel inputs = new InputsPanel(this, this);
     InterferencePanel drawingPanel = new InterferencePanel();
 
     public Interference() {
@@ -40,15 +44,38 @@ public class Interference extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().getClass().equals(JButton.class)) {
-            drawingPanel.setSlant(Double.parseDouble(inputs.angle.getText()));
-            drawingPanel.setLinesCount(Integer.parseInt(inputs.linesCount.getText()));
-            inputs.moiresDrawn.addElement(inputs.name.getText());
+            Moire moire = new Moire(inputs.name.getText(), inputs.options.getSelectedItem() + "");
+
+            if (moire.getType().equals("Lines")) {
+                moire.setLines(Integer.parseInt(inputs.linesCount.getText()));
+                moire.setAngle(Double.parseDouble(inputs.angle.getText()));
+            }
+
+            drawingPanel.setMMoire(moire);
+            inputs.moires.add(moire);
+            inputs.moiresDrawn.addElement(moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
             this.repaint();
+
         } else if (e.getSource().getClass().equals(JComboBox.class)) {
             String shape = ((JComboBox<?>) e.getSource()).getSelectedItem() + "";
-            drawingPanel.setShape(shape);
+            inputs.name.setText(shape + " x");
+
+            if (shape.equals("Circles")) {
+                inputs.showLineInputs(false);
+            } else if (shape.equals("Lines")) {
+                inputs.showLineInputs(true);
+            }
         }
+    }
 
 
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if (e.getSource().getClass().equals(JList.class)) {
+            int item = ((JList<?>) e.getSource()).getSelectedIndex();
+            inputs.updateInputs(item);
+            drawingPanel.setMMoire(inputs.moires.get(item));
+            this.repaint();
+        }
     }
 }

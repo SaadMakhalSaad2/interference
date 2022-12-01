@@ -1,5 +1,7 @@
 package oopprogramming;
 
+import oopprogramming.models.Moire;
+
 import javax.swing.JPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,11 +11,10 @@ import java.awt.geom.Line2D;
 
 public class InterferencePanel extends JPanel implements ActionListener {
     double slant2 = 0.0;
-    String shape = "Lines";
-    double slant = 2.0;
-    int linesCount = 1;
+    Moire mMoire;
 
     public InterferencePanel() {
+        mMoire = new Moire("Line x", "Lines");
         this.setBackground(Color.white);
     }
 
@@ -28,7 +29,7 @@ public class InterferencePanel extends JPanel implements ActionListener {
         drawingSettings(g);
 
         drawBackground();
-        switch (this.shape) {
+        switch (this.mMoire.getType()) {
             case "Lines" -> drawLine();
             case "Circles" -> drawCircles();
         }
@@ -84,12 +85,12 @@ public class InterferencePanel extends JPanel implements ActionListener {
         graphics2D.setStroke(stroke);
         graphics2D.setColor(Color.lightGray);
 
-        for (int i = 0; i < linesCount; i++) {
+        for (int i = 0; i < mMoire.getLines(); i++) {
             double x0 = -0.8;
-            double y0 = y - slant;
+            double y0 = y - mMoire.getAngle();
 
             double x1 = 0.8;
-            double y1 = y + slant;
+            double y1 = y + mMoire.getAngle();
 
             Line2D line = new Line2D.Double(x0, y0, x1, y1);
             Shape shape = transform.createTransformedShape(line);
@@ -104,22 +105,12 @@ public class InterferencePanel extends JPanel implements ActionListener {
         slant2 += 0.05;
         slant2 = slant2 >= 2.0 ? -slant2 : slant2;
 
-        slant -= 0.05;
-        slant = slant <= 0.0 ? 2.0 : slant;
         this.repaint();
 
         System.out.println("action" + e.getActionCommand());
     }
-
-    public void setSlant(double slant) {
-        this.slant = slant;
+    public void setMMoire(Moire mMoire) {
+        this.mMoire = mMoire;
     }
 
-    public void setLinesCount(int linesCount) {
-        this.linesCount = linesCount;
-    }
-
-    public void setShape(String shape) {
-        this.shape = shape;
-    }
 }

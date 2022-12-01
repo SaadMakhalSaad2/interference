@@ -2,7 +2,25 @@ package oopprogramming.models;
 
 public class Moire {
     String name;
+    int lines;
+    double angle;
     String type;
+
+    public int getLines() {
+        return lines;
+    }
+
+    public void setLines(int lines) {
+        this.lines = lines;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
 
     public Moire(String name, String type) {
         this.name = name;

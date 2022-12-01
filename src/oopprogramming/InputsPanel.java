@@ -1,18 +1,22 @@
 package oopprogramming;
 
+import oopprogramming.models.Moire;
+
 import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class InputsPanel extends JPanel {
-    public InputsPanel(ActionListener listener) {
+    public InputsPanel(ActionListener listener, ListSelectionListener listener2) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        addInputs(listener);
+        addInputs(listener, listener2);
     }
 
-    private void addInputs(ActionListener listener) {
+    private void addInputs(ActionListener listener, ListSelectionListener listener2) {
         angle.setMaximumSize(angle.getPreferredSize());
         linesCount.setMaximumSize(angle.getPreferredSize());
         name.setMaximumSize(angle.getPreferredSize());
@@ -22,12 +26,8 @@ public class InputsPanel extends JPanel {
         options.setMaximumSize(angle.getPreferredSize());
         angle.setText("2.0");
         linesCount.setText("1");
-        name.setText("Moire 1");
+        name.setText("Line 1");
 
-        JLabel optionsLabel = new JLabel("Moire type");
-        JLabel nameLabel = new JLabel("Name");
-        JLabel angleLabel = new JLabel("Angle");
-        JLabel linesCountLabel = new JLabel("# of lines");
         optionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         angleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -36,6 +36,7 @@ public class InputsPanel extends JPanel {
 
         draw.addActionListener(listener);
         options.addActionListener(listener);
+        moiresJList.addListSelectionListener(listener2);
 
         moiresJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         moiresJList.setLayoutOrientation(JList.VERTICAL);
@@ -58,8 +59,15 @@ public class InputsPanel extends JPanel {
 
     String[] choices = {"Lines", "Circles", "CHOICE 3", "CHOICE 4", "CHOICE 5", "CHOICE 6"};
     DefaultListModel<String> moiresDrawn = new DefaultListModel<>();
-    final JComboBox<String> options = new JComboBox<String>(choices);
+    List<Moire> moires = new ArrayList<>();
+    int selectedMoire = 0;
+
+    final JComboBox<String> options = new JComboBox<>(choices);
     JButton draw = new JButton("draw");
+    JLabel optionsLabel = new JLabel("Moire type");
+    JLabel nameLabel = new JLabel("Name");
+    JLabel angleLabel = new JLabel("Angle");
+    JLabel linesCountLabel = new JLabel("# of lines");
     JTextField angle = new JTextField(16);
     JTextField linesCount = new JTextField(16);
     JTextField name = new JTextField(16);
@@ -68,7 +76,23 @@ public class InputsPanel extends JPanel {
     JList moiresJList;
     JScrollPane moireListScroller;
 
+    public void updateInputs(int selectedMoireIndex) {
+        Moire selectedMoire = moires.get(selectedMoireIndex);
+        this.selectedMoire = selectedMoireIndex;
+        this.name.setText(selectedMoire.getName());
+        this.options.setSelectedIndex(new ArrayList<>(Arrays.asList(choices)).indexOf(selectedMoire.getType()));
+        if (selectedMoire.getType().equals("Circles")) {
+            showLineInputs(false);
+        } else {
+            this.angle.setText(String.valueOf(selectedMoire.getAngle()));
+            this.linesCount.setText(String.valueOf(selectedMoire.getLines()));
+        }
+    }
 
-
-
+    public void showLineInputs(boolean b) {
+        this.angle.setVisible(b);
+        this.linesCount.setVisible(b);
+        this.angleLabel.setVisible(b);
+        this.linesCountLabel.setVisible(b);
+    }
 }
