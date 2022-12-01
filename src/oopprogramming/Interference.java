@@ -3,19 +3,16 @@ package oopprogramming;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.dnd.DragGestureEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Time;
 
 public class Interference extends JFrame implements ActionListener {
-    InputsPanel inputs = new InputsPanel();
+    InputsPanel inputs = new InputsPanel(this);
     InterferencePanel drawingPanel = new InterferencePanel();
 
     public Interference() {
         setupFrame();
 
-        setupInputListeners();
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
         inputs.setAlignmentY(Component.TOP_ALIGNMENT);
@@ -26,13 +23,6 @@ public class Interference extends JFrame implements ActionListener {
         mainPanel.add(drawingPanel);
         this.add(mainPanel);
 
-    }
-
-    private void setupInputListeners() {
-        inputs.draw.addActionListener(e -> {
-            drawingPanel.setSlant(Double.parseDouble(inputs.textField.getText()));
-            this.repaint();
-        });
     }
 
     private void setupFrame() {
@@ -49,6 +39,16 @@ public class Interference extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("action happened");
+        if (e.getSource().getClass().equals(JButton.class)) {
+            drawingPanel.setSlant(Double.parseDouble(inputs.angle.getText()));
+            drawingPanel.setLinesCount(Integer.parseInt(inputs.linesCount.getText()));
+            inputs.moiresDrawn.addElement(inputs.name.getText());
+            this.repaint();
+        } else if (e.getSource().getClass().equals(JComboBox.class)) {
+            String shape = ((JComboBox<?>) e.getSource()).getSelectedItem() + "";
+            drawingPanel.setShape(shape);
+        }
+
+
     }
 }
