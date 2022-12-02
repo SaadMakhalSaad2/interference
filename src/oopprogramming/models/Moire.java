@@ -1,13 +1,24 @@
 package oopprogramming.models;
 
+import java.awt.*;
+
 public class Moire {
     String name;
+    Color color;
     int lines;
     double angle;
     String type;
 
     public int getLines() {
         return lines;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public void setLines(int lines) {

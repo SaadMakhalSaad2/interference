@@ -17,10 +17,14 @@ public class InputsPanel extends JPanel {
         addInputs(listener);
     }
 
+    private final JLabel speedLabel = new JLabel("speed");
+    private final JLabel spacingLabel = new JLabel("zoom");
+
     private void addInputs(ActionListener listener) {
 
         angle.setMaximumSize(angle.getPreferredSize());
         speed.setMaximumSize(angle.getPreferredSize());
+        spacing.setMaximumSize(angle.getPreferredSize());
         linesCount.setMaximumSize(angle.getPreferredSize());
         name.setMaximumSize(angle.getPreferredSize());
         moiresJList = new JList(moiresDrawn); //data has type Object[]
@@ -31,15 +35,10 @@ public class InputsPanel extends JPanel {
         linesCount.setText("1");
         name.setText("Line 1");
 
-        optionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        angleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        linesCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        draw.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         draw.addActionListener(listener);
         remove.addActionListener(listener);
         speed.addChangeListener((ChangeListener) listener);
+        spacing.addChangeListener((ChangeListener) listener);
         moireTypeDropdown.addActionListener(listener);
         moiresJList.addListSelectionListener((ListSelectionListener) listener);
 
@@ -65,7 +64,11 @@ public class InputsPanel extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0, 8)));
         this.add(buttons);
         this.add(Box.createRigidArea(new Dimension(0, 24)));
+        this.add(speedLabel);
         this.add(speed);
+        this.add(Box.createRigidArea(new Dimension(0, 12)));
+        this.add(spacingLabel);
+        this.add(spacing);
         this.add(Box.createRigidArea(new Dimension(0, 100)));
         this.add(moireListScroller);
     }
@@ -86,6 +89,7 @@ public class InputsPanel extends JPanel {
     JTextField linesCount = new JTextField(16);
     JTextField name = new JTextField(16);
     JSlider speed = new JSlider();
+    JSlider spacing = new JSlider();
 
     JList moiresJList;
     JScrollPane moireListScroller;

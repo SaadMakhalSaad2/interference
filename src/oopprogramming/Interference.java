@@ -36,6 +36,8 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
     private void setupFrame() {
         this.setBackground(Color.white);
         this.setSize(512, 512);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
         this.setTitle("Moire Drawer");
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -59,7 +61,6 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
     }
 
     private void removeMoire() {
-
         int indexRemoved = selectedIndex;
         inputs.moiresDrawn.remove(selectedIndex);
         inputs.moires.remove(indexRemoved);
@@ -76,12 +77,12 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
             drawingPanel.moireList.set(selectedIndex, moire);
             inputs.moiresDrawn.set(selectedIndex, moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
         } else {
+            moire.setColor(new Color((int) (Math.random() * 0x1000000)));
             inputs.moires.add(moire);
             drawingPanel.moireList.add(moire);
             inputs.moiresDrawn.addElement(moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
         }
 
-        drawingPanel.setMMoire(moire);
         this.repaint();
         updating = false;
         inputs.remove.setVisible(false);
@@ -108,7 +109,6 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
         if (e.getSource().getClass().equals(JList.class)) {
             System.out.println("selected index: " + selectedIndex);
             inputs.updateInputs(selectedIndex);
-            drawingPanel.setMMoire(inputs.moires.get(selectedIndex));
             selectedIndex = ((JList<?>) e.getSource()).getSelectedIndex();
             this.repaint();
             updating = true;
@@ -119,6 +119,8 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
     @Override
     public void stateChanged(ChangeEvent e) {
         drawingPanel.speed = inputs.speed.getValue() * 1.0 / 100;
-        System.out.println("speed" + drawingPanel.speed);
+        drawingPanel.spacing = (int) (inputs.spacing.getValue() * 5.0 / 100);
+        System.out.println("speed " + drawingPanel.speed);
+        System.out.println("spacing " + drawingPanel.spacing);
     }
 }
