@@ -4,14 +4,16 @@ import oopprogramming.models.Moire;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Interference extends JFrame implements ActionListener, ListSelectionListener {
-    InputsPanel inputs = new InputsPanel(this, this);
+public class Interference extends JFrame implements ActionListener, ListSelectionListener, ChangeListener {
+    InputsPanel inputs = new InputsPanel(this);
     InterferencePanel drawingPanel = new InterferencePanel();
 
     public Interference() {
@@ -23,10 +25,12 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
         inputs.setBorder(new EmptyBorder(10, 10, 10, 10));
         drawingPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        Timer timer = new Timer(50, drawingPanel);
+        timer.start();
+
         mainPanel.add(inputs);
         mainPanel.add(drawingPanel);
         this.add(mainPanel);
-
     }
 
     private void setupFrame() {
@@ -43,37 +47,57 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().getClass().equals(JButton.class)) {
-            Moire moire = new Moire(inputs.name.getText(), inputs.moireTypeDropdown.getSelectedItem() + "");
-
-            if (moire.getType().equals("Lines")) {
-                moire.setLines(Integer.parseInt(inputs.linesCount.getText()));
-                moire.setAngle(Double.parseDouble(inputs.angle.getText()));
-            }
-            if (updating) {
-                inputs.moires.set(selectedIndex, moire);
-                inputs.moiresDrawn.set(selectedIndex, moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
-            } else {
-                inputs.moires.add(moire);
-                inputs.moiresDrawn.addElement(moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
+        if (e.getSource().getClass().equals(JButton.class))
+            if (e.getActionCommand().equals("remove") && selectedIndex > -1)
+                removeMoire();
+            else {
+                drawButtonListener(e);
             }
 
-            drawingPanel.setMMoire(moire);
-            this.repaint();
-            updating = false;
-            inputs.clearInputs();
-        } else if (e.getSource().getClass().equals(JComboBox.class)) {
-            String shape = ((JComboBox<?>) e.getSource()).getSelectedItem() + "";
-            inputs.name.setText(shape + " x");
-
-            if (shape.equals("Circles")) {
-                inputs.showLineInputs(false);
-            } else if (shape.equals("Lines")) {
-                inputs.showLineInputs(true);
-            }
-        }
+        else if (e.getSource().getClass().equals(JComboBox.class))
+            typeDropdownListener(e);
     }
 
+    private void removeMoire() {
+
+        int indexRemoved = selectedIndex;
+        inputs.moiresDrawn.remove(selectedIndex);
+        inputs.moires.remove(indexRemoved);
+    }
+
+    private void drawButtonListener(ActionEvent e) {
+        Moire moire = new Moire(inputs.name.getText(), inputs.moireTypeDropdown.getSelectedItem() + "");
+
+        moire.setLines(Integer.parseInt(inputs.linesCount.getText()));
+        moire.setAngle(Double.parseDouble(inputs.angle.getText()));
+
+        if (updating) {
+            inputs.moires.set(selectedIndex, moire);
+            drawingPanel.moireList.set(selectedIndex, moire);
+            inputs.moiresDrawn.set(selectedIndex, moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
+        } else {
+            inputs.moires.add(moire);
+            drawingPanel.moireList.add(moire);
+            inputs.moiresDrawn.addElement(moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
+        }
+
+        drawingPanel.setMMoire(moire);
+        this.repaint();
+        updating = false;
+        inputs.remove.setVisible(false);
+        //inputs.clearInputs();
+    }
+
+    private void typeDropdownListener(ActionEvent e) {
+        String shape = ((JComboBox<?>) e.getSource()).getSelectedItem() + "";
+        inputs.name.setText(shape + " x");
+
+        if (shape.equals("Circles")) {
+            inputs.showLineInputs(false);
+        } else if (shape.equals("Lines")) {
+            inputs.showLineInputs(true);
+        }
+    }
 
     int selectedIndex;
     boolean updating = false;
@@ -83,11 +107,18 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
         inputs.draw.setText("update");
         if (e.getSource().getClass().equals(JList.class)) {
             System.out.println("selected index: " + selectedIndex);
-            selectedIndex = ((JList<?>) e.getSource()).getSelectedIndex();
             inputs.updateInputs(selectedIndex);
             drawingPanel.setMMoire(inputs.moires.get(selectedIndex));
+            selectedIndex = ((JList<?>) e.getSource()).getSelectedIndex();
             this.repaint();
             updating = true;
+//            inputs.remove.setVisible(true);
         }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        drawingPanel.speed = inputs.speed.getValue() * 1.0 / 100;
+        System.out.println("speed" + drawingPanel.speed);
     }
 }

@@ -3,6 +3,7 @@ package oopprogramming;
 import oopprogramming.models.Moire;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -11,14 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class InputsPanel extends JPanel {
-    public InputsPanel(ActionListener listener, ListSelectionListener listener2) {
+    public InputsPanel(Interference listener) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        addInputs(listener, listener2);
+        addInputs(listener);
     }
 
-    private void addInputs(ActionListener listener, ListSelectionListener listener2) {
-        
+    private void addInputs(ActionListener listener) {
+
         angle.setMaximumSize(angle.getPreferredSize());
+        speed.setMaximumSize(angle.getPreferredSize());
         linesCount.setMaximumSize(angle.getPreferredSize());
         name.setMaximumSize(angle.getPreferredSize());
         moiresJList = new JList(moiresDrawn); //data has type Object[]
@@ -36,13 +38,21 @@ public class InputsPanel extends JPanel {
         draw.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         draw.addActionListener(listener);
+        remove.addActionListener(listener);
+        speed.addChangeListener((ChangeListener) listener);
         moireTypeDropdown.addActionListener(listener);
-        moiresJList.addListSelectionListener(listener2);
+        moiresJList.addListSelectionListener((ListSelectionListener) listener);
 
         moiresJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         moiresJList.setLayoutOrientation(JList.VERTICAL);
         moiresJList.setVisibleRowCount(-1);
 
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
+        buttons.add(draw);
+        buttons.add(Box.createRigidArea(new Dimension(8, 0)));
+        buttons.add(remove);
+        remove.setVisible(false);
 
         this.add(optionsLabel);
         this.add(moireTypeDropdown);
@@ -53,7 +63,9 @@ public class InputsPanel extends JPanel {
         this.add(angleLabel);
         this.add(angle);
         this.add(Box.createRigidArea(new Dimension(0, 8)));
-        this.add(draw);
+        this.add(buttons);
+        this.add(Box.createRigidArea(new Dimension(0, 24)));
+        this.add(speed);
         this.add(Box.createRigidArea(new Dimension(0, 100)));
         this.add(moireListScroller);
     }
@@ -65,6 +77,7 @@ public class InputsPanel extends JPanel {
 
     final JComboBox<String> moireTypeDropdown = new JComboBox<>(choices);
     JButton draw = new JButton("draw");
+    JButton remove = new JButton("remove");
     JLabel optionsLabel = new JLabel("Moire type");
     JLabel nameLabel = new JLabel("Name");
     JLabel angleLabel = new JLabel("Angle");
@@ -72,7 +85,7 @@ public class InputsPanel extends JPanel {
     JTextField angle = new JTextField(16);
     JTextField linesCount = new JTextField(16);
     JTextField name = new JTextField(16);
-
+    JSlider speed = new JSlider();
 
     JList moiresJList;
     JScrollPane moireListScroller;
@@ -84,19 +97,16 @@ public class InputsPanel extends JPanel {
         this.moireTypeDropdown.setSelectedIndex(new ArrayList<>(Arrays.asList(choices)).indexOf(selectedMoire.getType()));
         this.name.setText(String.valueOf(selectedMoire.getName()));
 
-        if (selectedMoire.getType().equals("Circles")) {
-            showLineInputs(false);
-        } else {
-            this.angle.setText(String.valueOf(selectedMoire.getAngle()));
-            this.linesCount.setText(String.valueOf(selectedMoire.getLines()));
-        }
+        this.angle.setText(String.valueOf(selectedMoire.getAngle()));
+        this.linesCount.setText(String.valueOf(selectedMoire.getLines()));
+
     }
 
     public void showLineInputs(boolean b) {
-        this.angle.setVisible(b);
-        this.linesCount.setVisible(b);
-        this.angleLabel.setVisible(b);
-        this.linesCountLabel.setVisible(b);
+//        this.angle.setVisible(b);
+//        this.linesCount.setVisible(b);
+//        this.angleLabel.setVisible(b);
+//        this.linesCountLabel.setVisible(b);
     }
 
 
