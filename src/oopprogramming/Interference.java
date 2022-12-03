@@ -55,7 +55,6 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
             else {
                 drawButtonListener(e);
             }
-
         else if (e.getSource().getClass().equals(JComboBox.class))
             typeDropdownListener(e);
     }
@@ -64,6 +63,14 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
         int indexRemoved = selectedIndex;
         inputs.moiresDrawn.remove(selectedIndex);
         inputs.moires.remove(indexRemoved);
+        drawingPanel.moireList.remove(indexRemoved);
+        selectedIndex = -1;
+        this.repaint();
+        inputs.moiresJList.clearSelection();
+        updating = false;
+        inputs.remove.setVisible(false);
+        inputs.draw.setText("draw");
+        System.out.println(drawingPanel.moireList.size());
     }
 
     private void drawButtonListener(ActionEvent e) {
@@ -73,6 +80,7 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
         moire.setAngle(Double.parseDouble(inputs.angle.getText()));
 
         if (updating) {
+            moire.setColor(inputs.moires.get(selectedIndex).getColor());
             inputs.moires.set(selectedIndex, moire);
             drawingPanel.moireList.set(selectedIndex, moire);
             inputs.moiresDrawn.set(selectedIndex, moire.getName() + "   " + moire.getType().toLowerCase().charAt(0));
@@ -86,7 +94,9 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
         this.repaint();
         updating = false;
         inputs.remove.setVisible(false);
-        //inputs.clearInputs();
+        inputs.moiresJList.clearSelection();
+        inputs.draw.setText("draw");
+        selectedIndex = -1;
     }
 
     private void typeDropdownListener(ActionEvent e) {
@@ -105,14 +115,15 @@ public class Interference extends JFrame implements ActionListener, ListSelectio
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
+        selectedIndex = ((JList<?>) e.getSource()).getSelectedIndex();
         inputs.draw.setText("update");
-        if (e.getSource().getClass().equals(JList.class)) {
+        if (e.getSource().getClass().equals(JList.class) && selectedIndex != -1) {
+
             System.out.println("selected index: " + selectedIndex);
             inputs.updateInputs(selectedIndex);
-            selectedIndex = ((JList<?>) e.getSource()).getSelectedIndex();
             this.repaint();
             updating = true;
-//            inputs.remove.setVisible(true);
+            inputs.remove.setVisible(true);
         }
     }
 

@@ -95,6 +95,7 @@ public class InputsPanel extends JPanel {
     JScrollPane moireListScroller;
 
     public void updateInputs(int selectedMoireIndex) {
+        System.out.println("update inputs " + selectedMoireIndex);
         Moire selectedMoire = moires.get(selectedMoireIndex);
         this.selectedMoire = selectedMoireIndex;
         this.name.setText(selectedMoire.getName());
